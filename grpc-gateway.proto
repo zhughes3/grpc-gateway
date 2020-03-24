@@ -1,0 +1,29 @@
+syntax = "proto3";
+package models;
+
+import "google/api/annotations.proto";
+
+message Post {
+    string title = 1;
+    repeated string tags = 2;
+    string content = 3;
+    string slug = 4;
+}
+
+service PostService {
+    rpc ReadPost(ReadPostRequest) returns (Post) {
+        option (google.api.http) = {
+            get: "/v1/posts/{slug}"
+        };
+    }
+    rpc CreatePost(Post) returns (Post) {
+        option(google.api.http) = {
+            post: "/v1/posts"
+            body: "*"
+        };
+    }
+}
+
+message ReadPostRequest {
+    string slug = 1;
+}

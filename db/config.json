@@ -1,0 +1,5 @@
+{
+  "driver": "postgres",
+  "database": "host=127.0.0.1 port=5432 user=zhughes3 password=4Q4BKS#8ZMb@ dbname=grpc sslmode=disable",
+  "migrationDirectory" : "migrations"
+}
