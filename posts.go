@@ -11,15 +11,18 @@ import (
 
 func (s *server) ReadPost(ctx context.Context, p *models.ReadPostRequest) (*models.Post, error) {
 	var err error
-	post := &models.Post{}
+	po := &models.Post{}
+
 	if len(p.GetSlug()) > 0 {
-		post.Title = p.GetSlug()
-		post.Content = "some more content"
-		post.Tags = []string{"boom", "town",}
-		return post, err
+		po, err = s.db.readPost(p.GetSlug())
+		if err != nil {
+			return nil, err
+		}
+
+		return po, err
 	}
 	err = errors.New("slug empty")
-	return post, err
+	return nil, err
 }
 func (s *server) CreatePost(ctx context.Context, p *models.Post) (*models.Post, error) {
 	title := p.GetTitle()
