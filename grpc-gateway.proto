@@ -2,28 +2,52 @@ syntax = "proto3";
 package models;
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 message Post {
-    string title = 1;
-    repeated string tags = 2;
-    string content = 3;
-    string slug = 4;
+    uint64 id = 1;
+    string title = 2;
+    repeated string tags = 3;
+    string content = 4;
+    string slug = 5;
+    google.protobuf.Timestamp created_at = 6;
+    google.protobuf.Timestamp updated_at = 7;
 }
 
 service PostService {
-    rpc ReadPost(ReadPostRequest) returns (Post) {
-        option (google.api.http) = {
-            get: "/v1/posts/{slug}"
-        };
-    }
-    rpc CreatePost(Post) returns (Post) {
+    rpc CreatePost (Post) returns (Post) {
         option(google.api.http) = {
             post: "/v1/posts"
             body: "*"
         };
     }
+    rpc ReadPost (PostFilter) returns (Post) {
+        option (google.api.http) = {
+            get: "/v1/posts/{slug}"
+        };
+    }
+    rpc UpdatePost (UpdatePostRequest) returns (Post) {
+        option (google.api.http) = {
+            put: "/v1/posts/{slug}"
+            body: "*"
+        };
+    }
+    rpc DeletePost(PostFilter) returns (PostError) {
+        option (google.api.http) = {
+            delete: "/v1/posts/{slug}"
+        };
+    }
 }
 
-message ReadPostRequest {
+message UpdatePostRequest {
     string slug = 1;
+    Post post = 2;
+}
+
+message PostFilter {
+    string slug = 1;
+}
+
+message PostError {
+    bool response = 1;
 }
