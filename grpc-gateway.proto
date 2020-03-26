@@ -15,19 +15,39 @@ message Post {
 }
 
 service PostService {
-    rpc ReadPost(ReadPostRequest) returns (Post) {
-        option (google.api.http) = {
-            get: "/v1/posts/{slug}"
-        };
-    }
-    rpc CreatePost(Post) returns (Post) {
+    rpc CreatePost (Post) returns (Post) {
         option(google.api.http) = {
             post: "/v1/posts"
             body: "*"
         };
     }
+    rpc ReadPost (PostFilter) returns (Post) {
+        option (google.api.http) = {
+            get: "/v1/posts/{slug}"
+        };
+    }
+    rpc UpdatePost (UpdatePostRequest) returns (Post) {
+        option (google.api.http) = {
+            put: "/v1/posts/{slug}"
+            body: "*"
+        };
+    }
+    rpc DeletePost(PostFilter) returns (PostError) {
+        option (google.api.http) = {
+            delete: "/v1/posts/{slug}"
+        };
+    }
 }
 
-message ReadPostRequest {
+message UpdatePostRequest {
     string slug = 1;
+    Post post = 2;
+}
+
+message PostFilter {
+    string slug = 1;
+}
+
+message PostError {
+    bool response = 1;
 }
