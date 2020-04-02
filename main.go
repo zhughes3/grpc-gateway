@@ -2,6 +2,8 @@ package main
 
 import (
 	"net"
+
+	"github.com/spf13/viper"
 )
 
 type serverConfig struct {
@@ -14,28 +16,17 @@ type dbConfig struct {
 
 func main() {
 	config_defaults := map[string]interface{}{
-		"rpc_host": "localhost",
+		"rpc_host":  "localhost",
 		"http_host": "localhost",
-		"db_host": "localhost",
+		"db_host":   "localhost",
 	}
 	config, err := readConfig("config.env", config_defaults)
 	if err != nil {
 		panic(err)
 	}
-	sCfg := &serverConfig{
-		rpcHost:     config.GetString("rpc_host"),
-		rpcPort:  config.GetString("rpc_port"),
-		httpHost: config.GetString("http_host"),
-		httpPort: config.GetString("http_port"),
-	}
-	dbCfg := &dbConfig{
-		name:     config.GetString("db_name"),
-		host:     config.GetString("db_host"),
-		port:     config.GetString("db_port"),
-		user:     config.GetString("db_user"),
-		password: config.GetString("db_password"),
-	}
-	conn, err := net.Listen("tcp", ":" + sCfg.httpPort)
+	sCfg := getServerConfig(config)
+	dbCfg := getDBConfig(config)
+	conn, err := net.Listen("tcp", ":"+sCfg.httpPort)
 	if err != nil {
 		panic(err)
 	}
@@ -49,5 +40,21 @@ func main() {
 	s.Start()
 }
 
+func getServerConfig(cfg *viper.Viper) *serverConfig {
+	return &serverConfig{
+		rpcHost:  cfg.GetString("rpc_host"),
+		rpcPort:  cfg.GetString("rpc_port"),
+		httpHost: cfg.GetString("http_host"),
+		httpPort: cfg.GetString("http_port"),
+	}
+}
 
-
+func getDBConfig(cfg *viper.Viper) *dbConfig {
+	return &dbConfig{
+		name:     cfg.GetString("db_name"),
+		host:     cfg.GetString("db_host"),
+		port:     cfg.GetString("db_port"),
+		user:     cfg.GetString("db_user"),
+		password: cfg.GetString("db_password"),
+	}
+}

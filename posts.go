@@ -28,6 +28,7 @@ func (s *server) ReadPost(ctx context.Context, p *models.PostFilter) (*models.Po
 	err = errors.New("slug empty")
 	return nil, err
 }
+
 func (s *server) CreatePost(ctx context.Context, p *models.Post) (*models.Post, error) {
 	title := p.GetTitle()
 	slug := slugs.Make(title)
